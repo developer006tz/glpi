@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     unzip \
     git \
+    gettext \
     cron \
     && rm -rf /var/lib/apt/lists/*
 
