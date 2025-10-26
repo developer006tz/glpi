@@ -27,8 +27,7 @@ INSTALL.md
 *.md
 docs/
 
-# Tests
-tests/
+# Tests (keep tests/ for composer autoload requirements)
 .phpunit.result.cache
 phpunit.xml
 

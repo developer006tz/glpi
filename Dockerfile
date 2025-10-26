@@ -80,9 +80,9 @@ WORKDIR /var/www/html
 # Copy application files
 COPY --chown=www-data:www-data . /var/www/html
 
-# Install dependencies
+# Install dependencies (production only, no dev dependencies)
 RUN if [ -f bin/console ]; then \
-    php bin/console dependencies install --allow-superuser --no-interaction --composer-no-interaction; \
+    php bin/console dependencies install --allow-superuser --no-interaction --composer-no-interaction --composer-options="--no-dev --optimize-autoloader"; \
     fi
 
 # Create necessary directories and set permissions
