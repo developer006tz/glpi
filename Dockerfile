@@ -55,8 +55,23 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 
 # Configure Apache
 RUN a2enmod rewrite headers \
-    && sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && echo "ServerTokens Prod\nServerSignature Off" >> /etc/apache2/apache2.conf
+    && { \
+        echo '<VirtualHost *:80>'; \
+        echo '    ServerName localhost'; \
+        echo '    DocumentRoot /var/www/html/public'; \
+        echo '    <Directory /var/www/html/public>'; \
+        echo '        Options -Indexes +FollowSymLinks'; \
+        echo '        AllowOverride All'; \
+        echo '        Require all granted'; \
+        echo '        DirectoryIndex index.php'; \
+        echo '    </Directory>'; \
+        echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
+        echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
+        echo '</VirtualHost>'; \
+    } > /etc/apache2/sites-available/000-default.conf \
+    && echo "ServerTokens Prod" >> /etc/apache2/apache2.conf \
+    && echo "ServerSignature Off" >> /etc/apache2/apache2.conf \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # PHP configuration for GLPI
 RUN { \
