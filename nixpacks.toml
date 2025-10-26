@@ -5,10 +5,10 @@ nixPkgs = [
   "imagemagick",
   "ffmpeg",
   "php82Extensions.imagick",
-  "php82Extensions.bcmath",
-  "php82Extensions.intl",
   "php82Extensions.ldap",
-  "php82Extensions.opcache"
+  "php82Extensions.opcache",
+  "php82Extensions.bz2",
+  "php82Extensions.zip"
 ]
 
 [phases.install]
