@@ -18,6 +18,11 @@ services:
         condition: service_healthy
     environment:
       - TZ=${TIMEZONE:-UTC}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-glpi}
+      - DB_USER=${DB_USER:-glpi}
+      - DB_PASSWORD=${DB_PASSWORD:-glpi}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
