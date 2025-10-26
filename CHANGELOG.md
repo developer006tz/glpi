@@ -4,7 +4,7 @@ The present file will list all changes made to the project; according to the
 [Keep a Changelog](http://keepachangelog.com/) project.
 
 ## [11.0.2] unreleased
-
+/Users/ludovic/development/coco/glpi
 ### Added
 
 ### Changed
