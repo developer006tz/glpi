@@ -1,5 +1,6 @@
 [variables]
 NIXPACKS_NO_MUSL = "1"
+NIXPACKS_PHP_EXTENSIONS = "bz2,ctype,curl,dom,fileinfo,filter,gd,iconv,intl,libxml,mbstring,mysqli,openssl,session,simplexml,tokenizer,zlib,pdo,pdo_mysql,opcache,imagick,ldap,zip"
 
 [phases.setup]
 nixPkgs = [
