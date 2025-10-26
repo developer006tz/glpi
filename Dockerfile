@@ -82,7 +82,7 @@ COPY --chown=www-data:www-data . /var/www/html
 
 # Install dependencies
 RUN if [ -f bin/console ]; then \
-    php bin/console dependencies install --no-interaction --composer-no-interaction; \
+    php bin/console dependencies install --allow-superuser --no-interaction --composer-no-interaction; \
     fi
 
 # Create necessary directories and set permissions
