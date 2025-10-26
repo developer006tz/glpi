@@ -8,7 +8,6 @@ Use the default `docker-compose.yaml` which includes both GLPI app and MariaDB d
 
 **Environment Variables:**
 ```env
-PORT=80
 TIMEZONE=Africa/Dar_es_Salaam
 DB_HOST=db
 DB_PORT=3306
@@ -23,6 +22,8 @@ DB_ROOT_PASSWORD=your_root_password
 docker-compose up -d
 ```
 
+**Note:** The application exposes port 80 internally. Use Dokploy's domain/proxy settings to route traffic to your application.
+
 ---
 
 ### Option 2: Deploy with External Database (Recommended for Production)
@@ -31,7 +32,6 @@ Use `docker-compose.external-db.yaml` when you have a separate database server.
 
 **Environment Variables:**
 ```env
-PORT=80
 TIMEZONE=Africa/Dar_es_Salaam
 DB_HOST=your-db-server.com
 DB_PORT=3306
@@ -71,13 +71,23 @@ DB_USER=glpi
 DB_PASSWORD=your_db_password
 ```
 
-### Step 2: Deploy
+### Step 2: Configure Domain & Proxy
+
+In Dokploy's application settings:
+1. Go to **Domains** section
+2. Add your domain (e.g., `glpi.yourdomain.com`)
+3. Enable **SSL/TLS** (recommended)
+4. Set **Container Port**: `80`
+5. Dokploy's Traefik proxy will automatically route traffic to your app
+
+### Step 3: Deploy
 
 Dokploy will automatically:
 - Clone your GitHub repository
 - Build the Docker image
 - Start the containers
 - Create persistent volumes
+- Configure reverse proxy routing
 
 ---
 

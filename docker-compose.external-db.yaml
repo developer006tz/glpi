@@ -12,8 +12,8 @@ services:
       - glpi_files:/var/www/html/files
       - glpi_config:/var/www/html/config
       - glpi_marketplace:/var/www/html/marketplace
-    ports:
-      - "${PORT:-80}:80"
+    expose:
+      - "80"
     environment:
       - TZ=${TIMEZONE:-UTC}
       - DB_HOST=${DB_HOST}
