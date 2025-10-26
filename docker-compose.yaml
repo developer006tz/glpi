@@ -1,83 +1,54 @@
+version: '3.8'
+
 services:
   app:
     container_name: "glpi-app"
     build:
-      context: ".docker/app"
-      args:
-        PHP_VERSION: "8.4"
-    restart: "unless-stopped"
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
     volumes:
-      - ".:/var/www/glpi:rw"
-      - "custom_php_ini:/usr/local/etc/php/custom_conf.d/:rw"
+      - glpi_files:/var/www/html/files
+      - glpi_config:/var/www/html/config
+      - glpi_marketplace:/var/www/html/marketplace
     ports:
-      - "8080:80"
-      - "9637:9637"
+      - "${PORT:-80}:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      # By default the testing env is exposed under the 8080 internal port
-      CYPRESS_BASE_URL: http://localhost:8080
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - TZ=${TIMEZONE:-UTC}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   db:
     container_name: "glpi-db"
-    image: "mariadb:11.8"
-    restart: "unless-stopped"
+    image: mariadb:11.8
+    restart: unless-stopped
     volumes:
-      - "db:/var/lib/mysql"
-      - ".docker/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql"
+      - glpi_db:/var/lib/mysql
     environment:
-      MARIADB_ROOT_PASSWORD: "glpi"
-      MARIADB_DATABASE: "glpi"
-      MARIADB_USER: "glpi"
-      MARIADB_PASSWORD: "glpi"
-    expose:
-      - "3306"
-
-  mailpit:
-    container_name: "glpi-mailpit"
-    image: "axllent/mailpit"
-    restart: "unless-stopped"
-    expose:
-      - "1025"
-    ports:
-      - "8025:8025"
-
-  dbgate:
-    container_name: "glpi-dbgate"
-    image: "dbgate/dbgate:latest"
-    restart: "unless-stopped"
-    ports:
-      - "8090:3000"
-    environment:
-      CONNECTIONS: "glpi"
-
-      LABEL_glpi: "GLPI Mysql Server"
-      SERVER_glpi: "db"
-      USER_glpi: "glpi"
-      PASSWORD_glpi: "glpi"
-      PORT_glpi: 3306
-      ENGINE_glpi: "mysql@dbgate-plugin-mysql"
-
-  # To create a preconfigured LDAP object in GLPI, run `make console c='tools:generate_dev_ldap'`
-  openldap:
-    container_name: "glpi-openldap"
-    image: "osixia/openldap:latest"
-    restart: "unless-stopped"
-    environment:
-      LDAP_ORGANISATION: "GLPI"
-      LDAP_DOMAIN: "glpi.org"
-      LDAP_ADMIN_USERNAME: "admin"
-      LDAP_ADMIN_PASSWORD: "admin"
-    command: "--copy-service"
-    volumes:
-      - "./tests/LDAP/ldif/10-users.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif:rw"
-      - "ldap_files:/var/lib/ldap:rw"
-      - "ldap_config:/etc/ldap/slapd.d/:rw"
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-glpi_root}
+      MARIADB_DATABASE: ${DB_DATABASE:-glpi}
+      MARIADB_USER: ${DB_USER:-glpi}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-glpi}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=512M
+      - --max-allowed-packet=64M
 
 volumes:
-  db:
-  custom_php_ini:
-  ldap_files:
-  ldap_config:
+  glpi_db:
+  glpi_files:
+  glpi_config:
+  glpi_marketplace:
