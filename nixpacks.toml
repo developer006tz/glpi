@@ -1,6 +1,14 @@
+[variables]
+NIXPACKS_NO_MUSL = "1"
+
 [phases.setup]
 nixPkgs = [
-  "...",
+  "php82",
+  "nginx",
+  "libmysqlclient",
+  "phpPackages.composer",
+  "nodejs_22",
+  "npm-9_x",
   "python311Packages.supervisor",
   "imagemagick",
   "ffmpeg",
@@ -8,7 +16,9 @@ nixPkgs = [
   "php82Extensions.ldap",
   "php82Extensions.opcache",
   "php82Extensions.bz2",
-  "php82Extensions.zip"
+  "php82Extensions.zip",
+  "php82Extensions.pdo",
+  "php82Extensions.pdo_mysql"
 ]
 
 [phases.install]
